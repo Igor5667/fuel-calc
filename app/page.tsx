@@ -3,10 +3,7 @@
 const destinations = [
   { name: "Dworzec Zachodni", distance: "7.4" },
   { name: "Dom Marii", distance: "2.3" },
-  { name: "10 km", distance: "10" },
-  { name: "20 km", distance: "20" },
-  { name: "30 km", distance: "30" },
-  { name: "50 km", distance: "50" },
+  { name: "Siłownia", distance: "3.6" },
 ];
 
 import { useState } from "react";
@@ -18,9 +15,11 @@ export default function FuelCalc() {
   const [consumption, setConsumption] = useState("8");
   const [roundTrip, setRoundTrip] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedDestination, setSelectedDestination] = useState("");
 
-  const handleSelectDistance = (value: string) => {
+  const handleSelectDistance = (value: string, name: string) => {
     setDistance(value);
+    setSelectedDestination(name);
     setShowDropdown(false);
   };
 
@@ -49,12 +48,15 @@ export default function FuelCalc() {
         </div>
 
         {/* Distance Input */}
-        <div className="space-y-4">
+        <div className="relative space-y-4">
           <div className="relative">
             <input
               type="text"
               value={distance}
-              onChange={(e) => setDistance(e.target.value)}
+              onChange={(e) => {
+                setDistance(e.target.value);
+                setSelectedDestination("");
+              }}
               className="w-full h-16 px-6 text-2xl font-light text-center bg-white border-2 border-stone-300 rounded-full focus:outline-none focus:border-stone-400 transition-colors shadow-custom"
               placeholder="distance"
               inputMode="numeric"
@@ -71,12 +73,12 @@ export default function FuelCalc() {
               {showDropdown && (
                 <div className="absolute top-full right-0 mt-2 w-min whitespace-nowrap bg-white border border-stone-300 rounded-lg shadow-lg z-10">
                   <ul className="py-2">
-                    {destinations.map((dest) => (
+                    {destinations.map(({ name, distance }) => (
                       <li
-                        onClick={() => handleSelectDistance(dest.distance)}
+                        onClick={() => handleSelectDistance(distance, name)}
                         className="px-3 sm:px-4 py-2 hover:bg-stone-100 cursor-pointer"
                       >
-                        {dest.name}
+                        {name}
                       </li>
                     ))}
                   </ul>
@@ -84,6 +86,11 @@ export default function FuelCalc() {
               )}
             </div>
           </div>
+          {selectedDestination && (
+            <p className="absolute text-center text-stone-600 text-sm font-light bottom-0 left-1/2 transform -translate-x-1/2">
+              ({selectedDestination})
+            </p>
+          )}
         </div>
 
         {/* Round Trip Checkbox */}
