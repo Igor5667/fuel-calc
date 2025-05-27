@@ -7,7 +7,7 @@ const destinations = [
 ];
 
 import { useState } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, Copy, CopyCheck } from "lucide-react";
 
 export default function FuelCalc() {
   const [distance, setDistance] = useState("");
@@ -16,6 +16,7 @@ export default function FuelCalc() {
   const [roundTrip, setRoundTrip] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedDestination, setSelectedDestination] = useState("");
+  const [copied, setCopied] = useState(false); // Nowy stan do zarządzania ikoną
 
   const handleSelectDistance = (value: string, name: string) => {
     setDistance(value);
@@ -34,6 +35,12 @@ export default function FuelCalc() {
     const totalCost = fuelNeeded * price;
 
     return totalCost.toFixed(2);
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(calculateCost());
+    setCopied(true); // Ustaw ikonę na CopyCheck
+    setTimeout(() => setCopied(false), 30000); // Przywróć ikonę po 30 sekundach
   };
 
   return (
@@ -146,11 +153,11 @@ export default function FuelCalc() {
         </div>
 
         {/* Cost Result */}
-        <div className="pt-6">
+        <div className="pt-6 relative">
           <div className="text-center">
             <span className="text-stone-600 text-lg font-light">cost</span>
           </div>
-          <div className="w-full h-20 px-6 bg-white border-2 shadow-custom border-stone-300 rounded-3xl flex items-center justify-center">
+          <div className="w-full h-20 px-6 bg-white border-2 shadow-custom border-stone-300 rounded-3xl flex items-center justify-center relative">
             <div className="relative flex justify-center items-center h-10">
               <span className="z-10 text-4xl font-light text-stone-900 text-center">
                 {calculateCost()}
@@ -159,6 +166,19 @@ export default function FuelCalc() {
                 zł
               </span>
             </div>
+            {/* Ikona kopiowania */}
+            <button
+              onClick={handleCopy}
+              className={`absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-10 h-10 bg-stone-100 rounded-full shadow-custom hover:bg-stone-200 focus:outline-none transition-transform duration-200 ${
+                copied ? "scale-110" : ""
+              }`}
+            >
+              {copied ? (
+                <CopyCheck className="w-5 h-5 text-green-500" />
+              ) : (
+                <Copy className="w-5 h-5 text-stone-500" />
+              )}
+            </button>
           </div>
         </div>
       </div>
